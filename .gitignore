@@ -1,0 +1,18 @@
+# Ignore environment secrets
+env.php
+.env
+.env.*
+*.pem
+*.key
+# Uploaded images
+/images/
+# Node / Composer (future)
+/vendor/
+/node_modules/
+# OS files
+.DS_Store
+Thumbs.db
+# Logs
+*.log
+# Cache
+.cache/

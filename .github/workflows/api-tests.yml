@@ -1,0 +1,42 @@
+name: API Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test
+          MYSQL_DATABASE: aquarium_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -ptest"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq jq mysql-client
+
+      - name: Run API integration tests
+        env:
+          AQUARIUM_DB_HOST: 127.0.0.1
+          AQUARIUM_DB_NAME: aquarium_test
+          AQUARIUM_DB_USER: root
+          AQUARIUM_DB_PASS: test
+          AQUARIUM_LOGIN_PASSWORD: test-password
+          AQUARIUM_TEST_PORT: 8765
+        run: ./tests/api_test.sh
